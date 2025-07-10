@@ -1,0 +1,12 @@
+name: AlonePlugin
+version: '1.0-SNAPSHOT'
+main: lsc.ujbuda.alonePlugin.AlonePlugin
+api-version: '1.19'
+prefix: [ AlonePlugin ]
+authors: [ LSC Ujbuda ]
+description: I would like to be alone
+commands:
+  alone:
+    description: Show/Hide other players
+    permission: alone.alone
+    usage: Syntax error! Use it simply by typing /alone

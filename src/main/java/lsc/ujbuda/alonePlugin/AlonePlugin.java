@@ -44,22 +44,22 @@ public final class AlonePlugin extends JavaPlugin implements Listener {
 
                 if (playersAloneMap.containsKey(user)) {
                     playersAloneMap.remove(user);
-                    sender.sendMessage("[AlonePlugin] You're no longer alone.");
                     for (Player player : onlinePlayers) {
                         senderPlayer.showPlayer(this, player);
                     }
+                    sender.sendMessage("[AlonePlugin] You're no longer alone.");
                 } else {
                     playersAloneMap.put(user, senderPlayer);
-                    sender.sendMessage("[AlonePlugin] You're now alone.");
                     for (Player player : onlinePlayers) {
                         senderPlayer.hidePlayer(this, player);
                     }
+                    sender.sendMessage("[AlonePlugin] You're now alone.");
                 }
 
                 return true;
             }
         } catch (Exception e) {
-            sender.sendMessage("An unexpected error occured");
+            sender.sendMessage("An unexpected error occurred");
             log.info("Unexpected error");
             log.info(e.getMessage());
             return true;
@@ -69,25 +69,39 @@ public final class AlonePlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        //Hide newly joined users
+        Player playerJoined = event.getPlayer();
+        String user = playerJoined.getName();
+
+        //Hide newly joined player for people who want to be alone
         for (Player player : playersAloneMap.values()) {
-            player.hidePlayer(this, event.getPlayer());
+            player.hidePlayer(this, playerJoined);
+        }
+
+        //If newly joined user was alone before, hide others for him as well
+        if (playersAloneMap.containsKey(user)) {
+            playersAloneMap.put(user, playerJoined);
+            List<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+            for (Player player : onlinePlayers) {
+                playerJoined.hidePlayer(this, player);
+            }
+            playerJoined.sendMessage("[AlonePlugin] You're now alone.");
         }
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        String user = player.getName();
-        playersAloneMap.remove(user);
-    }
-
-    @EventHandler
-    public void onPlayerKick(PlayerKickEvent event) {
-        Player player = event.getPlayer();
-        String user = player.getName();
-        playersAloneMap.remove(user);
-    }
+    //Comment out if you don't want alone mode to persist through logouts
+    //@EventHandler
+    //public void onPlayerQuit(PlayerQuitEvent event) {
+    //    Player player = event.getPlayer();
+    //    String user = player.getName();
+    //    playersAloneMap.remove(user);
+    //}
+    //
+    //@EventHandler
+    //public void onPlayerKick(PlayerKickEvent event) {
+    //    Player player = event.getPlayer();
+    //    String user = player.getName();
+    //    playersAloneMap.remove(user);
+    //}
 
     @Override
     public void onDisable() {

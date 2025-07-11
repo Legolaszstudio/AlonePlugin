@@ -8,5 +8,10 @@ description: I would like to be alone
 commands:
   alone:
     description: Show/Hide other players
-    permission: alone.alone
+    permission: AlonePlugin.alone
     usage: Syntax error! Use it simply by typing /alone
+
+permissions:
+  AlonePlugin.alone:
+    description: Allows you to show/hide other users
+    default: true
